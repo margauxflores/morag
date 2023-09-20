@@ -1,0 +1,28 @@
+:root {
+  /* Typography */
+  --font-family: 'Noto Sans JP', sans-serif;
+
+  --font-size-default: 1.6rem;
+  --font-size-small: 1.2rem;
+  --font-size-medium: 2rem;
+  --font-size-large: 2.4rem;
+
+  /* Color */
+  --color-font: #333333;
+  --color-primary: #23242b;
+  --color-secondary: #eeeeee;
+  --color-white: #ffffff;
+  --color-light-grey: #7d7e8d;
+  --color-button-primary: #ff8042;
+
+  /* Rating Colors */
+  --color-rating-not-applicable: #adadad;
+  --color-rating-unacceptable: #ed561b;
+  --color-rating-poor: #ff9655;
+  --color-rating-adequate: #fff263;
+  --color-rating-good: #64e572;
+  --color-rating-excellent: #50b432;
+
+  /* Box Shadow */
+  --box-shadow--navigation: 0 0 5px rgba(0, 0, 0, 0.6);
+}
