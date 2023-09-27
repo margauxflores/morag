@@ -38,7 +38,7 @@ export default async function Home() {
     },
     {
       title: 'Nationality',
-      dataset: genderData,
+      dataset: nationalityData,
     },
   ];
 
