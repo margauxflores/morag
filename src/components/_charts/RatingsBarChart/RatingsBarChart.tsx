@@ -1,6 +1,7 @@
+'use client';
+
 import React from 'react';
-import styles from './RatingsBarChart.module.css';
-import { Ratings } from '@/types/data';
+import { DataSet } from '@/types/data';
 import {
   Bar,
   BarChart,
@@ -14,15 +15,10 @@ import {
 
 type Props = {
   title: string;
-  data: Ratings[];
-  valueName: string;
+  data: DataSet[];
 };
 
-export const RatingsBarChart: React.FC<Props> = ({
-  title,
-  data,
-  valueName,
-}) => {
+export const RatingsBarChart: React.FC<Props> = ({ title, data }) => {
   const barColors = [
     '#ed561b',
     '#ff9655',
@@ -32,29 +28,26 @@ export const RatingsBarChart: React.FC<Props> = ({
     '#adadad',
   ];
 
-  const formattedData = data.map(({ rating, value }) => ({
-    name: rating,
-    value,
-  }));
-
   return (
-    <div className={styles.wrapper}>
-      <h3 className={styles.title}>{title}</h3>
-      <div className={styles.chartContainer}>
-        <ResponsiveContainer height="100%" width="100%">
-          <BarChart width={100} height={100} data={formattedData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis type="number" domain={[0, 100]} hide />
-            <Tooltip />
-            <Bar dataKey="value" name={valueName}>
-              {formattedData.map((entry, index) => (
-                <Cell fill={barColors[index]} key={index} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+    <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+      <dt className="truncate text-sm font-medium text-gray-500">{title}</dt>
+      <dd className="mt-1 text-sm font-semibold tracking-tight text-gray-900">
+        <div className="w-[100%] h-[300px]">
+          <ResponsiveContainer height="100%" width="100%">
+            <BarChart width={100} height={100} data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" hide />
+              <YAxis type="number" domain={[0, 100]} hide />
+              <Tooltip />
+              <Bar dataKey="value" name="Responses">
+                {data.map((entry, index) => (
+                  <Cell fill={barColors[index]} key={index} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </dd>
     </div>
   );
 };

@@ -80,51 +80,51 @@ export const getResponderCareerLevelData = async () => {
   const data = [
     {
       name: 'Professor',
-      value: careerLevel1,
+      value: careerLevel1.toLocaleString(),
     },
     {
       name: 'Associate Professor',
-      value: careerLevel2,
+      value: careerLevel2.toLocaleString(),
     },
     {
       name: 'Lecturer',
-      value: careerLevel3,
+      value: careerLevel3.toLocaleString(),
     },
     {
       name: 'Chief/Senior Researcher',
-      value: careerLevel4,
+      value: careerLevel4.toLocaleString(),
     },
     {
       name: 'Researcher',
-      value: careerLevel5,
+      value: careerLevel5.toLocaleString(),
     },
     {
       name: 'JAMSTEC',
-      value: careerLevel6,
+      value: careerLevel6.toLocaleString(),
     },
     {
       name: 'Postdoctoral Researcher',
-      value: careerLevel7,
+      value: careerLevel7.toLocaleString(),
     },
     {
       name: 'PhD Student',
-      value: careerLevel8,
+      value: careerLevel8.toLocaleString(),
     },
     {
       name: 'Graduate Student',
-      value: careerLevel9,
+      value: careerLevel9.toLocaleString(),
     },
     {
       name: 'Undergraduate Student',
-      value: careerLevel10,
+      value: careerLevel10.toLocaleString(),
     },
     {
       name: 'Technical Staff',
-      value: careerLevel11,
+      value: careerLevel11.toLocaleString(),
     },
     {
       name: 'Other',
-      value: careerLevel12,
+      value: careerLevel12.toLocaleString(),
     },
   ];
 
@@ -153,15 +153,15 @@ export const getResponderGenderData = async () => {
   const data = [
     {
       name: 'Male',
-      value: gender1,
+      value: gender1.toLocaleString(),
     },
     {
       name: 'Female',
-      value: gender2,
+      value: gender2.toLocaleString(),
     },
     {
       name: 'Prefer not to answer',
-      value: gender3,
+      value: gender3.toLocaleString(),
     },
   ];
 
@@ -224,35 +224,35 @@ export const getResponderAgeGroupData = async () => {
   const data = [
     {
       name: "10's",
-      value: ageGroup1,
+      value: ageGroup1.toLocaleString(),
     },
     {
       name: "20's",
-      value: ageGroup2,
+      value: ageGroup2.toLocaleString(),
     },
     {
       name: "30's",
-      value: ageGroup3,
+      value: ageGroup3.toLocaleString(),
     },
     {
       name: "40's",
-      value: ageGroup4,
+      value: ageGroup4.toLocaleString(),
     },
     {
       name: "50's",
-      value: ageGroup5,
+      value: ageGroup5.toLocaleString(),
     },
     {
       name: "60's",
-      value: ageGroup6,
+      value: ageGroup6.toLocaleString(),
     },
     {
       name: "Over 60's",
-      value: ageGroup7,
+      value: ageGroup7.toLocaleString(),
     },
     {
       name: 'N/A',
-      value: ageGroup8,
+      value: ageGroup8.toLocaleString(),
     },
   ];
 
@@ -268,7 +268,10 @@ export const getResponderNationalityData = async () => {
   });
 
   const data = nationality.map((item) => {
-    return { name: item.nationality, value: item._count.nationality };
+    return {
+      name: item.nationality,
+      value: item._count.nationality.toLocaleString(),
+    };
   });
 
   return data;

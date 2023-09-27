@@ -23,16 +23,29 @@ export default async function Home() {
     getResponderNationalityData(),
   ]);
 
+  const dataset = [
+    {
+      title: 'Career Level',
+      dataset: careerLevelData,
+    },
+    {
+      title: 'Age Group',
+      dataset: ageGroupData,
+    },
+    {
+      title: 'Gender',
+      dataset: genderData,
+    },
+    {
+      title: 'Nationality',
+      dataset: genderData,
+    },
+  ];
+
   return (
-    <main>
+    <div>
       <StatsBox title="Overview" data={surveyData} />
-      <ResponderData
-        ageGroupData={ageGroupData}
-        valueName="Responders"
-        careerLevelData={careerLevelData}
-        nationalityData={nationalityData}
-        genderData={genderData}
-      />
-    </main>
+      <ResponderData valueName="Responders" data={dataset} />
+    </div>
   );
 }

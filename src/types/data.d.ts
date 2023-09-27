@@ -5,6 +5,11 @@ import {
   SatisfactionGaugeCategory,
 } from '~/types/enums';
 
+export type BarChartData = {
+  title: string;
+  dataset: DataSet[];
+};
+
 interface Ratings {
   rating: Rating;
   value: number;
@@ -12,7 +17,7 @@ interface Ratings {
 
 interface DataSet {
   name: string;
-  value: number;
+  value: string;
 }
 
 interface CategoryRating<T> {
