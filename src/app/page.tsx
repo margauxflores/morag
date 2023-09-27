@@ -1,5 +1,5 @@
 import { StatsBox } from '@/components/StatsBox';
-import { ResponderData } from '@/components/ResponderData';
+import { ResponderData } from '@/components/_sections';
 import {
   getResponderAgeGroupData,
   getResponderCareerLevelData,
