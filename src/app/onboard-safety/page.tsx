@@ -4,7 +4,7 @@ import React from 'react';
 import { OnboardSafetyRatings } from '@/components/_sections';
 
 export default async function OnboardSafetyPage() {
-  const data: BarChartData = await getOnboardSafetyRatings();
+  const data: BarChartData[] = await getOnboardSafetyRatings();
 
   return (
     <div>
