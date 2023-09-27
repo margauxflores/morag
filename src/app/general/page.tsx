@@ -5,7 +5,6 @@ import { BarChartData } from '@/types/data';
 
 export default async function GeneralPage() {
   const data: BarChartData[] = await getGeneralRatings();
-  // console.log(data);
 
   return (
     <div>
