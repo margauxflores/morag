@@ -9,7 +9,7 @@ export default async function OnboardSafetyPage() {
   return (
     <div>
       <h3 className="text-base font-semibold leading-6 text-gray-900">
-        General
+        Onboard Safety
       </h3>
       <OnboardSafetyRatings data={data} />
     </div>
