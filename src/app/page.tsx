@@ -1,14 +1,15 @@
 import { StatsBox } from '@/components/StatsBox';
+import { getResponderAgeGroupData, getSurveyData } from '@/utils/actions';
 import { ResponderData } from '@/components/ResponderData';
-import { getSurveyData } from '@/utils/actions';
 
 export default async function Home() {
-  const data = await getSurveyData();
+  const surveyData = await getSurveyData();
+  const ageGroupData = await getResponderAgeGroupData();
 
   return (
     <main>
-      <StatsBox title="Overview" data={data} />
-      <ResponderData />
+      <StatsBox title="Overview" data={surveyData} />
+      <ResponderData ageGroupData={ageGroupData} valueName="Responders" />
     </main>
   );
 }
