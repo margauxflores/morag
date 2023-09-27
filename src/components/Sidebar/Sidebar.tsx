@@ -24,6 +24,11 @@ const navigation = [
     icon: ChartBarSquareIcon,
   },
   {
+    name: 'Precruise Support',
+    href: '/precruise-support',
+    icon: ChartBarSquareIcon,
+  },
+  {
     name: 'Onboard Equipment',
     href: '/onboard-equipment',
     icon: ChartBarSquareIcon,
