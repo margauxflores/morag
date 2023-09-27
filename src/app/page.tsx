@@ -1,15 +1,38 @@
 import { StatsBox } from '@/components/StatsBox';
-import { getResponderAgeGroupData, getSurveyData } from '@/utils/actions';
 import { ResponderData } from '@/components/ResponderData';
+import {
+  getResponderAgeGroupData,
+  getResponderCareerLevelData,
+  getResponderGenderData,
+  getResponderNationalityData,
+  getSurveyData,
+} from '@/utils/server';
 
 export default async function Home() {
-  const surveyData = await getSurveyData();
-  const ageGroupData = await getResponderAgeGroupData();
+  const [
+    surveyData,
+    ageGroupData,
+    careerLevelData,
+    genderData,
+    nationalityData,
+  ] = await Promise.all([
+    getSurveyData(),
+    getResponderAgeGroupData(),
+    getResponderCareerLevelData(),
+    getResponderGenderData(),
+    getResponderNationalityData(),
+  ]);
 
   return (
     <main>
       <StatsBox title="Overview" data={surveyData} />
-      <ResponderData ageGroupData={ageGroupData} valueName="Responders" />
+      <ResponderData
+        ageGroupData={ageGroupData}
+        valueName="Responders"
+        careerLevelData={careerLevelData}
+        nationalityData={nationalityData}
+        genderData={genderData}
+      />
     </main>
   );
 }
