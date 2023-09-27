@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,143 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model age_group {
+  id        BigInt      @id @default(autoincrement())
+  name_en   String
+  name_jp   String
+  responder responder[]
+}
+
+model career_level {
+  id        BigInt      @id @default(autoincrement())
+  name_en   String
+  name_jp   String
+  responder responder[]
+}
+
+model cruise {
+  id             BigInt       @id @default(autoincrement())
+  code           String
+  leg            String?
+  region         String?
+  start_date     DateTime?    @db.Date
+  end_date       DateTime?    @db.Date
+  departure_port String?
+  arrival_port   String?
+  vessel_id      BigInt?
+  vessel         vessel?      @relation(fields: [vessel_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  proposal       proposal[]
+  researcher     researcher[]
+  responder      responder[]
+  response       response[]
+}
+
+model gender {
+  id        BigInt      @id @default(autoincrement())
+  name_en   String
+  name_jp   String
+  responder responder[]
+}
+
+model proposal {
+  id               BigInt  @id @default(autoincrement())
+  code             String
+  chief_researcher String?
+  proposer         String?
+  affiliation      String?
+  title_jp         String?
+  title_en         String?
+  cruise_id        BigInt?
+  cruise           cruise? @relation(fields: [cruise_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model question {
+  id                   BigInt            @id @default(autoincrement())
+  question_category_id BigInt
+  question_en          String
+  question_jp          String
+  is_rating            Boolean
+  is_comment           Boolean
+  question_category    question_category @relation(fields: [question_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  response             response[]
+}
+
+model question_category {
+  id          BigInt     @id @default(autoincrement())
+  survey_id   BigInt
+  category_en String
+  category_jp String
+  question    question[]
+  survey      survey     @relation(fields: [survey_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model rating {
+  id       BigInt     @id @default(autoincrement())
+  name_en  String
+  name_jp  String
+  response response[]
+}
+
+model researcher {
+  id                 BigInt  @id @default(autoincrement())
+  cruise_id          BigInt?
+  vessel_id          BigInt?
+  researcher_name    String
+  affiliation        String?
+  career_level       String?
+  university_name_jp String?
+  university_name_en String?
+  cruise             cruise? @relation(fields: [cruise_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vessel             vessel? @relation(fields: [vessel_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model responder {
+  id                 BigInt        @id @default(autoincrement())
+  cruise_id          BigInt?
+  submission_date    DateTime      @db.Date
+  name_jp            String
+  name_en            String
+  email              String
+  career_level_id    BigInt?
+  affiliation        String
+  gender_id          BigInt?
+  age_group_id       BigInt?
+  nationality        String
+  jamstec_experience Boolean
+  other_experience   Boolean
+  age_group          age_group?    @relation(fields: [age_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  career_level       career_level? @relation(fields: [career_level_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cruise             cruise?       @relation(fields: [cruise_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  gender             gender?       @relation(fields: [gender_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  response           response[]
+}
+
+model response {
+  id               BigInt     @id @default(autoincrement())
+  responder_id     BigInt?
+  question_id      BigInt?
+  rating_id        BigInt?
+  response_comment String?
+  cruise_id        BigInt?
+  cruise           cruise?    @relation(fields: [cruise_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question         question?  @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  rating           rating?    @relation(fields: [rating_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  responder        responder? @relation(fields: [responder_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model survey {
+  id                BigInt              @id @default(autoincrement())
+  ver               String
+  question_category question_category[]
+}
+
+model vessel {
+  id         BigInt       @id @default(autoincrement())
+  code       String
+  name_en    String
+  name_jp    String
+  cruise     cruise[]
+  researcher researcher[]
 }
