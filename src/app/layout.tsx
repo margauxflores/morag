@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import classNames from 'classnames';
 import { Sidebar } from '@/components/Sidebar';
+import { FilterBar } from '@/components/FilterBar/FilterBar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,7 +23,10 @@ export default function RootLayout({
       <body className={classNames(inter.className, 'h-full')}>
         <Sidebar />
         <main className="py-10 lg:pl-72">
-          <div className="px-4 sm:px-6 lg:px-8 max-w-screen-xl">{children}</div>
+          <div className="px-4 sm:px-6 lg:px-8 max-w-screen-xl">
+            <FilterBar />
+            {children}
+          </div>
         </main>
       </body>
     </html>

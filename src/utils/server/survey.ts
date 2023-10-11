@@ -12,8 +12,8 @@ export const getSurveyData = async () => {
       name: 'Total Cruises',
       stat: totalCruises.toString(),
     },
-    { name: 'Total Survey Responses', stat: responder.toLocaleString() },
-    { name: 'Cruise Response Rate', stat: 'xxxx' },
+    { name: 'Total Evaluated Cruises', stat: 'x' },
+    { name: 'Cruise Response Rate', stat: 'x' },
     { name: 'Total Researchers', stat: researcher.toLocaleString() },
     { name: 'Total Responders', stat: responder.toLocaleString() },
     {
