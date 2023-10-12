@@ -21,23 +21,6 @@ model career_level {
   responder responder[]
 }
 
-model cruise {
-  id             BigInt       @id @default(autoincrement())
-  code           String
-  leg            String?
-  region         String?
-  start_date     DateTime?    @db.Date
-  end_date       DateTime?    @db.Date
-  departure_port String?
-  arrival_port   String?
-  vessel_id      BigInt?
-  vessel         vessel?      @relation(fields: [vessel_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  proposal       proposal[]
-  researcher     researcher[]
-  responder      responder[]
-  response       response[]
-}
-
 model gender {
   id        BigInt      @id @default(autoincrement())
   name_en   String
