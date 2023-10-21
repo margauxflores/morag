@@ -1,6 +1,6 @@
 import { BarChartData } from '@/types/data';
 import { getOnboardResearchSupportRatings } from '@/utils/server';
-import { OnboardResearchSupportRatings } from '@/components/_sections/OnboardResearchSupportRatings';
+import { OnboardResearchSupportRatings } from '@/components/_sections/';
 
 export default async function OnboardResearchSupportPage() {
   const data: BarChartData[] = await getOnboardResearchSupportRatings();
