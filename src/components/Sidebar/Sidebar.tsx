@@ -43,6 +43,11 @@ const navigation = [
     href: '/onboard-network',
     icon: ChartBarSquareIcon,
   },
+  {
+    name: 'Life Onboard',
+    href: '/life-onboard',
+    icon: ChartBarSquareIcon,
+  },
 ];
 
 export const Sidebar: React.FC = ({}) => {

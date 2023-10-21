@@ -1,0 +1,1 @@
+export { LifeOnboardRatings } from './LifeOnboardRatings';
