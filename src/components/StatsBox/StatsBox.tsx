@@ -1,5 +1,3 @@
-import React from 'react';
-
 type StatData = {
   name: string;
   stat: string;
@@ -10,7 +8,7 @@ type Props = {
   data: StatData[];
 };
 
-export const StatsBox: React.FC<Props> = ({ title, data }) => {
+export const StatsBox = ({ title, data }: Props) => {
   return (
     <div className="mb-14">
       <h3 className="text-base font-semibold leading-6 text-gray-900">

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { BarChartData } from '@/types/data';
 import {
   Bar,
@@ -16,7 +15,7 @@ type Props = {
   data: BarChartData[];
 };
 
-export const ResponderData: React.FC<Props> = ({ valueName, data }) => {
+export const ResponderData = ({ valueName, data }: Props) => {
   return (
     <div>
       <h3 className="text-base font-semibold leading-6 text-gray-900">

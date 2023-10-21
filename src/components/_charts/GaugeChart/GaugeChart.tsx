@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './GaugeChart.module.css';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
@@ -7,7 +6,7 @@ type Props = {
   title: string;
 };
 
-export const GaugeChart: React.FC<Props> = ({ percentage, title }) => {
+export const GaugeChart = ({ percentage, title }: Props) => {
   const data = [{ value: percentage }, { value: 100 - percentage }];
 
   return (

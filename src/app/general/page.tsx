@@ -1,5 +1,4 @@
 import { getGeneralRatings } from '@/utils/server';
-import React from 'react';
 import { GeneralRatings } from '@/components/_sections';
 import { BarChartData } from '@/types/data';
 

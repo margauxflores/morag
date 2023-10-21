@@ -1,6 +1,5 @@
 import { BarChartData } from '@/types/data';
 import { getOnboardSafetyRatings } from '@/utils/server';
-import React from 'react';
 import { OnboardSafetyRatings } from '@/components/_sections';
 
 export default async function OnboardSafetyPage() {

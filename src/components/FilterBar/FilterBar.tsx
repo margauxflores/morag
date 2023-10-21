@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import classNames from 'classnames';
@@ -28,7 +28,7 @@ const quarters = [
   { id: 4, name: 'Q4' },
 ];
 
-export const FilterBar: React.FC = ({}) => {
+export const FilterBar = ({}) => {
   const [selectedVessel, setSelectedVessel] = useState(vessels[1]);
   const [selectedFiscalYear, setSelectedFiscalYear] = useState(fiscalYears[1]);
   const [selectedQuarter, setSelectedQuarter] = useState(quarters[1]);

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { DataSet } from '@/types/data';
 import {
   Bar,
@@ -18,7 +17,7 @@ type Props = {
   data: DataSet[];
 };
 
-export const RatingsBarChart: React.FC<Props> = ({ title, data }) => {
+export const RatingsBarChart = ({ title, data }: Props) => {
   const barColors = [
     '#ed561b',
     '#ff9655',

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {
   ChartBarSquareIcon,
   HomeIcon,
@@ -50,7 +49,7 @@ const navigation = [
   },
 ];
 
-export const Sidebar: React.FC = ({}) => {
+export const Sidebar = ({}) => {
   const pathname = usePathname();
 
   return (

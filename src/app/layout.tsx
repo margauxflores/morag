@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -13,11 +13,7 @@ export const metadata: Metadata = {
   description: 'Cruise Evaluation Survey Data',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="h-full bg-white">
       <body className={classNames(inter.className, 'h-full')}>

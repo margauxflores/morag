@@ -1,6 +1,5 @@
 import { BarChartData } from '@/types/data';
 import { getPrecruiseSupportRatings } from '@/utils/server';
-import React from 'react';
 import { PrecruiseSupportRatings } from '@/components/_sections';
 
 export default async function PrecruiseSupportPage() {
