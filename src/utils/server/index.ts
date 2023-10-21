@@ -6,4 +6,5 @@ export * from './onboard-safety';
 export * from './precruise-support';
 export * from './onboard-equipment';
 export * from './onboard-research-support';
+export * from './onboard-network';
 export * from './life-onboard';
