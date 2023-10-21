@@ -9,17 +9,21 @@ export const getSurveyData = async () => {
       cruise_id: true,
     },
   });
+
   const totalEvaluatedCruises = await prisma.responder.groupBy({
     by: ['cruise_id'],
     _count: {
       cruise_id: true,
     },
   });
+
   const cruiseResponseRate = calculatePercentage(
     totalEvaluatedCruises.length,
     totalCruises.length,
   );
+
   const responder = await prisma.responder.count();
+
   // TODO: Clean up total researchers logic
   const researcher = await prisma.researcher.count();
   const researchers = await prisma.researcher.findMany({
