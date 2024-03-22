@@ -6,6 +6,15 @@ type Props = {
   title: string;
 };
 
+// Override console.error
+// This is a hack to suppress the warning about missing defaultProps in recharts library as of version 2.12
+// @link https://github.com/recharts/recharts/issues/3615
+const error = console.error;
+console.error = (...args: any) => {
+  if (/defaultProps/.test(args[0])) return;
+  error(...args);
+};
+
 export const GaugeChart = ({ percentage, title }: Props) => {
   const data = [{ value: percentage }, { value: 100 - percentage }];
 

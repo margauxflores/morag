@@ -1,1 +1,0 @@
-export { OnboardEquipmentRatings } from './OnboardEquipmentRatings';

@@ -1,14 +1,33 @@
-import { BarChartData } from '@/types/data';
-import { getOnboardResearchSupportRatings } from '@/utils/server';
-import { OnboardResearchSupportRatings } from '@/components/_sections/';
+'use client';
 
-export default async function OnboardResearchSupportPage() {
-  const data: BarChartData[] = await getOnboardResearchSupportRatings();
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Section } from '@/components/Section';
+
+export default function OnboardResearchSupportPage() {
+  const { data: onboardResearchSupport } = useSuspenseQuery({
+    queryKey: ['onboard_research_support'],
+    queryFn: async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/onboard-research-support`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        },
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    },
+  });
 
   return (
-    <div>
-      <h3>Onboard Research Support</h3>
-      <OnboardResearchSupportRatings data={data} />
-    </div>
+    <Section
+      title={onboardResearchSupport.title}
+      data={onboardResearchSupport.data}
+    />
   );
 }

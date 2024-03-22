@@ -4,6 +4,7 @@ import { Fragment, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import classNames from 'classnames';
+import { useFilters } from '@/providers/filters';
 
 const vessels = [
   { id: 1, name: 'Hakuho-Maru' },
@@ -32,6 +33,26 @@ export const FilterBar = ({}) => {
   const [selectedVessel, setSelectedVessel] = useState(vessels[1]);
   const [selectedFiscalYear, setSelectedFiscalYear] = useState(fiscalYears[1]);
   const [selectedQuarter, setSelectedQuarter] = useState(quarters[1]);
+
+  const { setFilters } = useFilters();
+
+  const onClick = () => {
+    setFilters({
+      vessel: selectedVessel.name,
+      fiscalYear: selectedFiscalYear.name,
+      quarter: selectedQuarter.name,
+    });
+
+    let url = new URL(location.href);
+    let params = new URLSearchParams(url.search);
+
+    params.set('vessel', selectedVessel.id.toString());
+    params.set('year', selectedFiscalYear.name);
+    params.set('quarter', selectedQuarter.name);
+
+    url.search = params.toString();
+    window.history.pushState({}, '', url.toString());
+  };
 
   return (
     <div className="rounded-lg bg-white px-4 py-5 shadow sm:p-6 mb-20">
@@ -273,10 +294,11 @@ export const FilterBar = ({}) => {
           </Listbox>
         </div>
 
-        <div className="w-full flex items-center">
+        <div className="w-full flex self-end">
           <button
             type="button"
             className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full max-w-[150px]"
+            onClick={onClick}
           >
             Filter
           </button>

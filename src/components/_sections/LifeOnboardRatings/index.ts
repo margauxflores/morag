@@ -1,1 +1,0 @@
-export { LifeOnboardRatings } from './LifeOnboardRatings';

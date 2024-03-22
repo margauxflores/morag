@@ -1,16 +1,30 @@
-import { BarChartData } from '@/types/data';
-import { getPrecruiseSupportRatings } from '@/utils/server';
-import { PrecruiseSupportRatings } from '@/components/_sections';
+'use client';
 
-export default async function PrecruiseSupportPage() {
-  const data: BarChartData[] = await getPrecruiseSupportRatings();
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Section } from '@/components/Section';
+
+export default function PrecruiseSupportPage() {
+  const { data: precruiseSupport } = useSuspenseQuery({
+    queryKey: ['precruise_support'],
+    queryFn: async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/precruise-support`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        },
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    },
+  });
 
   return (
-    <div>
-      <h3 className="text-base font-semibold leading-6 text-gray-900">
-        Precruise Support
-      </h3>
-      <PrecruiseSupportRatings data={data} />
-    </div>
+    <Section title={precruiseSupport.title} data={precruiseSupport.data} />
   );
 }

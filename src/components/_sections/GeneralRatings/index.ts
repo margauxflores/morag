@@ -1,1 +1,0 @@
-export { GeneralRatings } from './GeneralRatings';

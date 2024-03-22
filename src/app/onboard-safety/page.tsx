@@ -1,16 +1,25 @@
-import { BarChartData } from '@/types/data';
-import { getOnboardSafetyRatings } from '@/utils/server';
-import { OnboardSafetyRatings } from '@/components/_sections';
+'use client';
 
-export default async function OnboardSafetyPage() {
-  const data: BarChartData[] = await getOnboardSafetyRatings();
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Section } from '@/components/Section';
 
-  return (
-    <div>
-      <h3 className="text-base font-semibold leading-6 text-gray-900">
-        Onboard Safety
-      </h3>
-      <OnboardSafetyRatings data={data} />
-    </div>
-  );
+export default function OnboardSafetyPage() {
+  const { data: onboardSafety } = useSuspenseQuery({
+    queryKey: ['onboard_safety'],
+    queryFn: async () => {
+      const response = await fetch(`http://localhost:3000/api/onboard-safety`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    },
+  });
+
+  return <Section data={onboardSafety.data} title={onboardSafety.title} />;
 }

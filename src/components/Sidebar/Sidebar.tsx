@@ -11,11 +11,11 @@ import { usePathname } from 'next/navigation';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
-  {
-    name: 'Researchers',
-    href: '/researchers',
-    icon: UsersIcon,
-  },
+  // {
+  //   name: 'Researchers',
+  //   href: '/researchers',
+  //   icon: UsersIcon,
+  // },
   { name: 'General', href: '/general', icon: ChartBarSquareIcon },
   {
     name: 'Onboard Safety',

@@ -14,3 +14,10 @@ interface DataSet {
   name: string;
   value: string;
 }
+
+export type FilterOptions = {
+  questionId: number;
+  vesselId?: number;
+  startDate?: string;
+  endDate?: string;
+};

@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import classNames from 'classnames';
 import { Sidebar } from '@/components/Sidebar';
 import { FilterBar } from '@/components/FilterBar/FilterBar';
+import Providers from '@/providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,8 +21,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Sidebar />
         <main className="py-10 lg:pl-72">
           <div className="px-4 sm:px-6 lg:px-8 max-w-screen-xl">
-            <FilterBar />
-            {children}
+            <Providers>
+              <FilterBar />
+              {children}
+            </Providers>
           </div>
         </main>
       </body>

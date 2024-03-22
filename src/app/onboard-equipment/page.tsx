@@ -1,16 +1,30 @@
-import { BarChartData } from '@/types/data';
-import { getOnboardEquipmentRatings } from '@/utils/server';
-import { OnboardEquipmentRatings } from '@/components/_sections';
+'use client';
 
-export default async function OnboardEquipmentPage() {
-  const data: BarChartData[] = await getOnboardEquipmentRatings();
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Section } from '@/components/Section';
+
+export default function OnboardEquipmentPage() {
+  const { data: onboardEquipment } = useSuspenseQuery({
+    queryKey: ['onboard_equipment'],
+    queryFn: async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/onboard-equipment`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        },
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    },
+  });
 
   return (
-    <div>
-      <h3 className="text-base font-semibold leading-6 text-gray-900">
-        Onboard Equipment
-      </h3>
-      <OnboardEquipmentRatings data={data} />
-    </div>
+    <Section title={onboardEquipment.title} data={onboardEquipment.data} />
   );
 }

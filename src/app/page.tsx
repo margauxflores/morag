@@ -1,50 +1,52 @@
+'use client';
+
 import { StatsBox } from '@/components/StatsBox';
 import { ResponderData } from '@/components/_sections';
-import {
-  getResponderAgeGroupData,
-  getResponderCareerLevelData,
-  getResponderGenderData,
-  getResponderNationalityData,
-  getSurveyData,
-} from '@/utils/server';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
-export default async function Home() {
-  const [
-    surveyData,
-    ageGroupData,
-    careerLevelData,
-    genderData,
-    nationalityData,
-  ] = await Promise.all([
-    getSurveyData(),
-    getResponderAgeGroupData(),
-    getResponderCareerLevelData(),
-    getResponderGenderData(),
-    getResponderNationalityData(),
-  ]);
+export default function Home() {
+  const { data: survey } = useSuspenseQuery({
+    queryKey: ['survey'],
+    queryFn: async () => {
+      const response = await fetch(`http://localhost:3000/api/survey`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    },
+  });
 
   const dataset = [
     {
       title: 'Career Level',
-      dataset: careerLevelData,
+      dataset: survey[1]?.dataset,
     },
     {
       title: 'Age Group',
-      dataset: ageGroupData,
+      dataset: survey[2]?.dataset,
     },
     {
       title: 'Gender',
-      dataset: genderData,
+      dataset: survey[3]?.dataset,
     },
     {
       title: 'Nationality',
-      dataset: nationalityData,
+      dataset: survey[4]?.dataset,
     },
   ];
 
   return (
     <div>
-      <StatsBox title="Overview" data={surveyData} />
+      {survey[0]?.value && (
+        <StatsBox title="Overview" data={survey[0]?.value} />
+      )}
       <ResponderData valueName="Responders" data={dataset} />
     </div>
   );
