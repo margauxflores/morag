@@ -5,12 +5,12 @@ export const formatDateToSQLFormat = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-type Quarter = 'Q1' | 'Q2' | 'Q3' | 'Q4';
+export type Quarter = 'Q1' | 'Q2' | 'Q3' | 'Q4';
 
-function getQuarterDateRange(
+export const getQuarterDateRange = (
   year: number,
   quarter: Quarter,
-): { startDate: string; endDate: string } {
+): { startDate: string; endDate: string } => {
   let startDate: Date;
   let endDate: Date;
 
@@ -41,10 +41,4 @@ function getQuarterDateRange(
     startDate: startDate.toISOString().substring(0, 10),
     endDate: endDate.toISOString().substring(0, 10),
   };
-}
-
-// Example usage:
-console.log(getQuarterDateRange(2024, 'Q1'));
-console.log(getQuarterDateRange(2024, 'Q2'));
-console.log(getQuarterDateRange(2024, 'Q3'));
-console.log(getQuarterDateRange(2024, 'Q4'));
+};

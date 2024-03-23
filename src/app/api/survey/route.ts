@@ -1,13 +1,23 @@
 import { getSurveyData } from '@/server/actions';
+import { getQuarterDateRange } from '@/utils';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
     const requestBody = await request.json();
-    const { vesselId, startDate, endDate } = requestBody;
+    const { vessel, fiscalYear, quarter } = requestBody;
+    let dateRange = null;
 
-    const data = await getSurveyData({ vesselId, startDate, endDate });
+    if (fiscalYear && quarter) {
+      dateRange = getQuarterDateRange(fiscalYear, quarter);
+    }
+
+    const data = await getSurveyData({
+      vesselId: vessel,
+      startDate: dateRange?.startDate,
+      endDate: dateRange?.endDate,
+    });
 
     return new Response(JSON.stringify(data), {
       headers: { 'Content-Type': 'application/json' },

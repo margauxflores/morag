@@ -2,8 +2,11 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Section } from '@/components/Section';
+import { useFilters } from '@/providers/filters';
 
 export default function OnboardNetworkPage() {
+  const { filters } = useFilters();
+
   const { data: onboardNetwork } = useSuspenseQuery({
     queryKey: ['onboard_network'],
     queryFn: async () => {
@@ -14,7 +17,7 @@ export default function OnboardNetworkPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({}),
+          body: JSON.stringify({ ...filters }),
         },
       );
       if (!response.ok) {

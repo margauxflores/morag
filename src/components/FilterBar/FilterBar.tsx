@@ -1,10 +1,26 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import classNames from 'classnames';
 import { useFilters } from '@/providers/filters';
+import { useQueryClient } from '@tanstack/react-query';
+
+interface Vessel {
+  id: number;
+  name: string;
+}
+
+interface FiscalYear {
+  id: number;
+  name: string;
+}
+
+interface Quarter {
+  id: number;
+  name: string;
+}
 
 const vessels = [
   { id: 1, name: 'Hakuho-Maru' },
@@ -30,28 +46,66 @@ const quarters = [
 ];
 
 export const FilterBar = ({}) => {
-  const [selectedVessel, setSelectedVessel] = useState(vessels[1]);
-  const [selectedFiscalYear, setSelectedFiscalYear] = useState(fiscalYears[1]);
-  const [selectedQuarter, setSelectedQuarter] = useState(quarters[1]);
+  const [selectedVessel, setSelectedVessel] = useState<Vessel | null>(null);
+  const [selectedFiscalYear, setSelectedFiscalYear] =
+    useState<FiscalYear | null>(null);
+  const [selectedQuarter, setSelectedQuarter] = useState<Quarter | null>(null);
+  const queryClient = useQueryClient();
 
   const { setFilters } = useFilters();
 
+  useEffect(() => {
+    const filters: Record<any, any> = {};
+    const params = new URLSearchParams();
+
+    if (selectedVessel) {
+      filters.vessel = selectedVessel.id;
+      params.set('vessel', selectedVessel.id.toString());
+    } else {
+      params.delete('vessel');
+    }
+
+    if (selectedFiscalYear) {
+      filters.fiscalYear = selectedFiscalYear.name;
+      params.set('fiscalYear', selectedFiscalYear.name);
+    } else {
+      params.delete('fiscalYear');
+    }
+
+    if (selectedQuarter) {
+      filters.quarter = selectedQuarter.name;
+      params.set('quarter', selectedQuarter.name);
+    } else {
+      params.delete('quarter');
+    }
+
+    setFilters(filters);
+  }, [
+    selectedVessel,
+    selectedFiscalYear,
+    selectedQuarter,
+    setFilters,
+    queryClient,
+  ]);
+
   const onClick = () => {
-    setFilters({
-      vessel: selectedVessel.name,
-      fiscalYear: selectedFiscalYear.name,
-      quarter: selectedQuarter.name,
-    });
+    if (selectedVessel && selectedFiscalYear && selectedQuarter) {
+      setFilters({
+        vessel: selectedVessel.id,
+        fiscalYear: selectedFiscalYear.name,
+        quarter: selectedQuarter.name,
+      });
 
-    let url = new URL(location.href);
-    let params = new URLSearchParams(url.search);
+      let url = new URL(window.location.href);
+      let params = new URLSearchParams(url.search);
+      params.set('vessel', selectedVessel.id.toString());
+      params.set('fiscalYear', selectedFiscalYear.name);
+      params.set('quarter', selectedQuarter.name);
+      url.search = params.toString();
+      window.history.pushState({}, '', url.toString());
+    }
 
-    params.set('vessel', selectedVessel.id.toString());
-    params.set('year', selectedFiscalYear.name);
-    params.set('quarter', selectedQuarter.name);
-
-    url.search = params.toString();
-    window.history.pushState({}, '', url.toString());
+    void queryClient.invalidateQueries();
   };
 
   return (
@@ -71,7 +125,7 @@ export const FilterBar = ({}) => {
                 <div className="relative mt-2">
                   <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                     <span className="block truncate">
-                      {selectedVessel.name}
+                      {selectedVessel ? selectedVessel.name : 'Select a vessel'}
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                       <ChevronUpDownIcon
@@ -149,7 +203,9 @@ export const FilterBar = ({}) => {
                 <div className="relative mt-2">
                   <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                     <span className="block truncate">
-                      {selectedFiscalYear.name}
+                      {selectedFiscalYear
+                        ? selectedFiscalYear.name
+                        : 'Select a fiscal year'}
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                       <ChevronUpDownIcon
@@ -227,7 +283,9 @@ export const FilterBar = ({}) => {
                 <div className="relative mt-2">
                   <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                     <span className="block truncate">
-                      {selectedQuarter.name}
+                      {selectedQuarter
+                        ? selectedQuarter.name
+                        : 'Select a quarter'}
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                       <ChevronUpDownIcon

@@ -3,8 +3,10 @@
 import { StatsBox } from '@/components/StatsBox';
 import { ResponderData } from '@/components/_sections';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useFilters } from '@/providers/filters';
 
 export default function Home() {
+  const { filters } = useFilters();
   const { data: survey } = useSuspenseQuery({
     queryKey: ['survey'],
     queryFn: async () => {
@@ -13,7 +15,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ ...filters }),
       });
 
       if (!response.ok) {

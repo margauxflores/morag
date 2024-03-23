@@ -1,19 +1,28 @@
-import { PropsWithChildren, useState, createContext, useContext } from 'react';
+import {
+  PropsWithChildren,
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+} from 'react';
 
 interface FiltersState {
-  vessel: string;
+  vessel: number;
   fiscalYear: string;
   quarter: string;
 }
 
-interface FiltersContextType extends FiltersState {
+interface FiltersContextType {
+  filters: FiltersState;
   setFilters: (newFilters: Partial<FiltersState>) => void;
 }
 
 const defaultContext: FiltersContextType = {
-  vessel: '',
-  fiscalYear: '',
-  quarter: '',
+  filters: {
+    vessel: 1,
+    fiscalYear: '',
+    quarter: '',
+  },
   setFilters: () => {}, // No-op function as a placeholder
 };
 
@@ -27,24 +36,15 @@ export const useFilters = () => {
   return context;
 };
 
-const FiltersProvider = ({ children }: PropsWithChildren) => {
-  const [filters, setFilters] = useState<FiltersState>({
-    vessel: '',
-    fiscalYear: '',
-    quarter: '',
-  });
+export const FiltersProvider = ({ children }: PropsWithChildren) => {
+  const [filters, setFiltersState] = useState({ ...defaultContext.filters });
 
-  const handleSetFilters = (newFilters: Partial<FiltersState>) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      ...newFilters,
-    }));
-  };
+  const setFilters = useCallback((newFilters: Partial<FiltersState>) => {
+    setFiltersState((prev) => ({ ...prev, ...newFilters }));
+  }, []);
 
   return (
-    <FiltersContext.Provider
-      value={{ ...filters, setFilters: handleSetFilters }}
-    >
+    <FiltersContext.Provider value={{ filters, setFilters }}>
       {children}
     </FiltersContext.Provider>
   );

@@ -1,25 +1,23 @@
-import { generateResponse } from '@/utils';
+import { prepareAndGenerateResponse } from '@/utils';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
     const requestBody = await request.json();
-    const { vesselId, startDate, endDate } = requestBody;
 
+    const title = 'General';
     const questions = [
       { id: 5, title: 'Onboard Briefing' },
       { id: 6, title: 'Emergency Guidance' },
       { id: 7, title: 'Ship Drill' },
     ];
 
-    const response = await generateResponse(
-      'General',
+    const response = await prepareAndGenerateResponse({
+      ...requestBody,
+      title,
       questions,
-      vesselId,
-      startDate,
-      endDate,
-    );
+    });
 
     return new Response(JSON.stringify(response), {
       headers: { 'Content-Type': 'application/json' },

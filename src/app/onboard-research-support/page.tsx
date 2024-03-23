@@ -2,8 +2,11 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Section } from '@/components/Section';
+import { useFilters } from '@/providers/filters';
 
 export default function OnboardResearchSupportPage() {
+  const { filters } = useFilters();
+
   const { data: onboardResearchSupport } = useSuspenseQuery({
     queryKey: ['onboard_research_support'],
     queryFn: async () => {
@@ -14,7 +17,7 @@ export default function OnboardResearchSupportPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({}),
+          body: JSON.stringify({ ...filters }),
         },
       );
       if (!response.ok) {

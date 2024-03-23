@@ -1,12 +1,12 @@
-import { generateResponse } from '@/utils';
+import { prepareAndGenerateResponse } from '@/utils';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
     const requestBody = await request.json();
-    const { vesselId, startDate, endDate } = requestBody;
 
+    const title = 'Life Onboard';
     const questions = [
       { id: 80, title: 'Cleanliness' },
       { id: 81, title: 'Facilities' },
@@ -14,13 +14,11 @@ export async function POST(request: Request) {
       { id: 83, title: 'Dining' },
     ];
 
-    const response = await generateResponse(
-      'Life Onboard',
+    const response = await prepareAndGenerateResponse({
+      ...requestBody,
+      title,
       questions,
-      vesselId,
-      startDate,
-      endDate,
-    );
+    });
 
     return new Response(JSON.stringify(response), {
       headers: { 'Content-Type': 'application/json' },

@@ -1,12 +1,12 @@
-import { generateResponse } from '@/utils';
+import { generateResponse, prepareAndGenerateResponse } from '@/utils';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
     const requestBody = await request.json();
-    const { vesselId, startDate, endDate } = requestBody;
 
+    const title = 'Precruise Support';
     const questions = [
       { id: 21, title: 'Vessels and Tools Guide' },
       { id: 22, title: 'Advanced Vessels and Tools Guide' },
@@ -17,13 +17,11 @@ export async function POST(request: Request) {
       { id: 27, title: 'Overall Precruise Support' },
     ];
 
-    const response = await generateResponse(
-      'Precruise Support',
+    const response = await prepareAndGenerateResponse({
+      ...requestBody,
+      title,
       questions,
-      vesselId,
-      startDate,
-      endDate,
-    );
+    });
 
     return new Response(JSON.stringify(response), {
       headers: { 'Content-Type': 'application/json' },

@@ -2,8 +2,11 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Section } from '@/components/Section';
+import { useFilters } from '@/providers/filters';
 
 export default function OnboardSafetyPage() {
+  const { filters } = useFilters();
+
   const { data: onboardSafety } = useSuspenseQuery({
     queryKey: ['onboard_safety'],
     queryFn: async () => {
@@ -12,7 +15,7 @@ export default function OnboardSafetyPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ ...filters }),
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
