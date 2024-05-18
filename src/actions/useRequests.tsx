@@ -1,3 +1,5 @@
+'use client';
+import { useFilters } from '@/providers/filters';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 interface Filters {
@@ -10,7 +12,9 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const dynamic = 'force-dynamic';
 
-export const useGeneral = (filters: Filters) => {
+export const useGeneral = () => {
+  const { filters } = useFilters();
+
   return useSuspenseQuery({
     queryKey: ['general'],
     queryFn: async () => {
@@ -29,7 +33,8 @@ export const useGeneral = (filters: Filters) => {
   });
 };
 
-export const useLifeOnboard = (filters: Filters) => {
+export const useLifeOnboard = () => {
+  const { filters } = useFilters();
   return useSuspenseQuery({
     queryKey: ['life_onboard'],
     queryFn: async () => {
@@ -48,7 +53,8 @@ export const useLifeOnboard = (filters: Filters) => {
   });
 };
 
-export const useOnboardEquipment = (filters: Filters) => {
+export const useOnboardEquipment = () => {
+  const { filters } = useFilters();
   return useSuspenseQuery({
     queryKey: ['onboard_equipment'],
     queryFn: async () => {
@@ -67,7 +73,8 @@ export const useOnboardEquipment = (filters: Filters) => {
   });
 };
 
-export const useOnboardNetwork = (filters: Filters) => {
+export const useOnboardNetwork = () => {
+  const { filters } = useFilters();
   return useSuspenseQuery({
     queryKey: ['onboard_network'],
     queryFn: async () => {
@@ -86,7 +93,8 @@ export const useOnboardNetwork = (filters: Filters) => {
   });
 };
 
-export const useOnboardResearchSupport = (filters: Filters) => {
+export const useOnboardResearchSupport = () => {
+  const { filters } = useFilters();
   return useSuspenseQuery({
     queryKey: ['onboard_research_support'],
     queryFn: async () => {
@@ -105,7 +113,8 @@ export const useOnboardResearchSupport = (filters: Filters) => {
   });
 };
 
-export const useOnboardSafety = (filters: Filters) => {
+export const useOnboardSafety = () => {
+  const { filters } = useFilters();
   return useSuspenseQuery({
     queryKey: ['onboard_safety'],
     queryFn: async () => {
@@ -124,7 +133,8 @@ export const useOnboardSafety = (filters: Filters) => {
   });
 };
 
-export const usePreciseSupport = (filters: Filters) => {
+export const usePreciseSupport = () => {
+  const { filters } = useFilters();
   return useSuspenseQuery({
     queryKey: ['precruise_support'],
     queryFn: async () => {

@@ -32,3 +32,31 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+# Development Server with Docker
+
+## Requirements
+
+- [Docker](https://docs.docker.com/engine/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+## How to run server?
+
+In the root project open a terminal then run:
+
+- `docker-compose up -d` to run the process in the background
+  - `docker-compose logs` to check logs of containers when running in background
+  - `docker-compose logs -f` to watch logs of containers when running in background
+- `docker-compose up` to run the process in the foreground and see logs
+
+## How to stop server?
+
+- In the root project open a terminal then run `docker-compose stop` if its running in the background if not just hit `CTRL + C`
+
+## How to access servers?
+
+Following docker containers ports are exposed, that can be changed in docker-compose.yml file
+| Project | Port |
+| ------- | ---- |
+| APP | 3000 |
+| DB | 4444 |

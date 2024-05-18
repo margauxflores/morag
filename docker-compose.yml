@@ -1,5 +1,27 @@
 version: '3'
 services:
+
+  app:
+    container_name: morag_app
+    image: next
+    user: 'node'
+    environment:
+      - DATABASE_URL=postgresql://morag_admin:J3tisnsd9@localhost:5432/morag?schema=public
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+    volumes:
+      - ./:/app
+    ports:
+      - '3000:3000'
+    expose:
+      - '3000'
+    command: sh -c 'npm install && npm run dev'
+    depends_on:
+      - database
+    networks:
+      web:
+      dev:
+
   database:
     container_name: morag_db
     image: postgres:15.2
@@ -14,7 +36,10 @@ services:
       - '4444:5432'
     networks:
       db:
+      dev:
 
 networks:
   web:
   db:
+  dev:
+    driver: bridge
