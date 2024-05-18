@@ -7,10 +7,13 @@ import { useFilters } from '@/providers/filters';
 
 export default function Home() {
   const { filters } = useFilters();
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   const { data: survey } = useSuspenseQuery({
     queryKey: ['survey'],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:3000/api/survey`, {
+      const response = await fetch(`${apiUrl}/api/survey`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
