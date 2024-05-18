@@ -26,57 +26,59 @@ export const getSurveyData = async ({
       }),
   };
 
-  // Example usage of conditions in a query
-  const totalCruises = await prisma.researcher.groupBy({
-    by: ['cruise_id'],
-    where: {
-      cruise: {
-        vessel_id: vesselId, // This assumes vesselId is always defined; you might adjust based on your logic
+  const [totalCruises, totalEvaluatedCruises] = await prisma.$transaction([
+    prisma.researcher.groupBy({
+      by: ['cruise_id'],
+      where: {
+        cruise: {
+          vessel_id: vesselId, // This assumes vesselId is always defined; you might adjust based on your logic
+          ...(startDate &&
+            endDate && {
+              AND: [
+                { start_date: { gte: new Date(startDate) } },
+                { end_date: { lte: new Date(endDate) } },
+              ],
+            }),
+        },
+      },
+      _count: {
+        cruise_id: true,
+      },
+    }),
+    prisma.responder.groupBy({
+      by: ['cruise_id'],
+      _count: {
+        cruise_id: true,
+      },
+      where: {
+        // Check for vesselId directly related to the cruise
+        ...(vesselId && { cruise: { vessel_id: vesselId } }),
+        // Nested conditions for start_date and end_date within the cruise relation
         ...(startDate &&
           endDate && {
-            AND: [
-              { start_date: { gte: new Date(startDate) } },
-              { end_date: { lte: new Date(endDate) } },
-            ],
+            cruise: {
+              AND: [
+                { start_date: { gte: new Date(startDate) } },
+                { end_date: { lte: new Date(endDate) } },
+              ],
+            },
           }),
       },
-    },
-    _count: {
-      cruise_id: true,
-    },
-  });
+      orderBy: {
+        cruise_id: 'asc',
+      },
+    }),
+  ]);
 
-  const totalEvaluatedCruises = await prisma.responder.groupBy({
-    by: ['cruise_id'],
-    _count: {
-      cruise_id: true,
-    },
-    where: {
-      // Check for vesselId directly related to the cruise
-      ...(vesselId && { cruise: { vessel_id: vesselId } }),
-      // Nested conditions for start_date and end_date within the cruise relation
-      ...(startDate &&
-        endDate && {
-          cruise: {
-            AND: [
-              { start_date: { gte: new Date(startDate) } },
-              { end_date: { lte: new Date(endDate) } },
-            ],
-          },
-        }),
-    },
-    orderBy: {
-      cruise_id: 'asc',
-    },
-  });
+  const cruiseResponseRate =
+    totalCruises.length > 0
+      ? calculatePercentage(totalEvaluatedCruises.length, totalCruises.length)
+      : 0;
 
-  const cruiseResponseRate = calculatePercentage(
-    totalEvaluatedCruises.length,
-    totalCruises.length,
-  );
-
-  const responder = await prisma.responder.count();
-  const researcher = await prisma.researcher.count();
+  const [responder, researcher] = await prisma.$transaction([
+    prisma.responder.count(),
+    prisma.researcher.count(),
+  ]);
 
   const researcherResponseRate = calculatePercentage(responder, researcher);
 
