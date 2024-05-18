@@ -1,3 +1,4 @@
+'use client';
 import { BarChartData } from '@/types/data';
 import { RatingsBarChart } from '@/components/_charts';
 
