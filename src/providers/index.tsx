@@ -4,6 +4,7 @@ import { PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import FiltersProvider from '@/providers/filters';
+import { useIsClient } from '@/hooks/useIsClient';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -34,7 +35,12 @@ function getQueryClient() {
 }
 
 export default function Providers({ children }: PropsWithChildren<object>) {
+  const isClient = useIsClient();
   const queryClient = getQueryClient();
+
+  if (!children || !isClient) {
+    return <></>;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
