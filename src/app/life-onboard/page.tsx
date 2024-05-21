@@ -4,8 +4,6 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Section } from '@/components/Section';
 import { useFilters } from '@/providers/filters';
 
-export const dynamic = 'force-dynamic';
-
 export default function LifeOnboardPage() {
   const { filters } = useFilters();
 

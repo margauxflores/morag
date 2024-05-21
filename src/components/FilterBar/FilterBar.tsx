@@ -28,6 +28,7 @@ const vessels = [
   { id: 3, name: 'Yokosuka' },
   { id: 4, name: 'Kairei' },
   { id: 5, name: 'Mirai' },
+  { id: 6, name: 'Kaimei' },
 ];
 
 const fiscalYears = [
