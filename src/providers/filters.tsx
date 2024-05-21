@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 interface FiltersState {
-  vessel: number;
+  vessel: number | null;
   fiscalYear: string;
   quarter: string;
 }
@@ -19,7 +19,7 @@ interface FiltersContextType {
 
 const defaultContext: FiltersContextType = {
   filters: {
-    vessel: 1,
+    vessel: null,
     fiscalYear: '',
     quarter: '',
   },

@@ -31,7 +31,7 @@ export const getSurveyData = async ({
     by: ['cruise_id'],
     where: {
       cruise: {
-        vessel_id: vesselId, // This assumes vesselId is always defined; you might adjust based on your logic
+        ...(vesselId && { vessel_id: vesselId }),
         ...(startDate &&
           endDate && {
             AND: [
