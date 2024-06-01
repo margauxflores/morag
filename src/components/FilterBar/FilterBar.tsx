@@ -89,7 +89,7 @@ export const FilterBar = ({}) => {
     queryClient,
   ]);
 
-  const onClick = () => {
+  const onClickFilter = () => {
     if (selectedVessel && selectedFiscalYear && selectedQuarter) {
       setFilters({
         vessel: selectedVessel.id,
@@ -105,6 +105,23 @@ export const FilterBar = ({}) => {
       url.search = params.toString();
       window.history.pushState({}, '', url.toString());
     }
+
+    void queryClient.invalidateQueries();
+  };
+
+  const onClickReset = () => {
+    setSelectedVessel(null);
+    setSelectedFiscalYear(null);
+    setSelectedQuarter(null);
+    setFilters({});
+
+    let url = new URL(window.location.href);
+    let params = new URLSearchParams(url.search);
+    params.delete('vessel');
+    params.delete('fiscalYear');
+    params.delete('quarter');
+    url.search = params.toString();
+    window.history.pushState({}, '', url.toString());
 
     void queryClient.invalidateQueries();
   };
@@ -273,7 +290,7 @@ export const FilterBar = ({}) => {
           </Listbox>
         </div>
 
-        {/* Fiscal Year */}
+        {/* Quarter */}
         <div className="w-full">
           <Listbox value={selectedQuarter} onChange={setSelectedQuarter}>
             {({ open }) => (
@@ -353,13 +370,20 @@ export const FilterBar = ({}) => {
           </Listbox>
         </div>
 
-        <div className="w-full flex self-end">
+        <div className="w-full flex self-end gap-2">
           <button
             type="button"
             className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full max-w-[150px]"
-            onClick={onClick}
+            onClick={onClickFilter}
           >
             Filter
+          </button>
+          <button
+            type="button"
+            className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full max-w-[150px]"
+            onClick={onClickReset}
+          >
+            Reset
           </button>
         </div>
       </dd>
