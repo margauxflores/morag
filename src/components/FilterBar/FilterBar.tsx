@@ -81,6 +81,11 @@ export const FilterBar = ({}) => {
     }
 
     setFilters(filters);
+    window.history.pushState(
+      {},
+      '',
+      `${window.location.pathname}?${params.toString()}`,
+    );
   }, [
     selectedVessel,
     selectedFiscalYear,

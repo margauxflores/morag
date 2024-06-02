@@ -1,5 +1,5 @@
 import { getSurveyData } from '@/server/actions';
-import { getQuarterDateRange } from '@/utils';
+import { getQuarterDateRange, getYearStartAndEndDates } from '@/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,6 +8,14 @@ export async function POST(request: Request) {
     const requestBody = await request.json();
     const { vessel, fiscalYear, quarter } = requestBody;
     let dateRange = null;
+
+    if (fiscalYear) {
+      const { startDate, endDate } = getYearStartAndEndDates(fiscalYear);
+      dateRange = {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      };
+    }
 
     if (fiscalYear && quarter) {
       dateRange = getQuarterDateRange(fiscalYear, quarter);

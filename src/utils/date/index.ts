@@ -42,3 +42,13 @@ export const getQuarterDateRange = (
     endDate: endDate.toISOString().substring(0, 10),
   };
 };
+
+export const getYearStartAndEndDates = (year: number) => {
+  const startDate = new Date(year, 0, 1); // January 1st of the given year
+  const endDate = new Date(year, 11, 31); // December 31st of the given year
+
+  // Ensure endDate includes the last moment of the year
+  endDate.setHours(23, 59, 59, 999);
+
+  return { startDate, endDate };
+};
