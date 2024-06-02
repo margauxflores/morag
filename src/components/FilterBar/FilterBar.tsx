@@ -4,8 +4,9 @@ import { Fragment, useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import classNames from 'classnames';
-import { useFilters } from '@/providers/filters';
+import { FiltersState, useFilters } from '@/providers/filters';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 interface Vessel {
   id: number;
@@ -52,6 +53,7 @@ const quarters = [
 ];
 
 export const FilterBar = ({}) => {
+  const { filters, setFilters } = useFilters();
   const [selectedVessel, setSelectedVessel] = useState<Vessel | null>(null);
   const [selectedFiscalYear, setSelectedFiscalYear] =
     useState<FiscalYear | null>(null);
@@ -59,66 +61,37 @@ export const FilterBar = ({}) => {
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const queryClient = useQueryClient();
-
-  const { setFilters } = useFilters();
+  const router = useRouter();
 
   useEffect(() => {
-    const filters: Record<any, any> = {};
+    // Initialize state from filters context
+    if (filters.vessel)
+      setSelectedVessel(vessels.find((v) => v.id === filters.vessel) || null);
+    if (filters.fiscalYear)
+      setSelectedFiscalYear(
+        fiscalYears.find((fy) => fy.name === filters.fiscalYear) || null,
+      );
+    if (filters.quarter)
+      setSelectedQuarter(
+        quarters.find((q) => q.name === filters.quarter) || null,
+      );
+    if (filters.startDate) setStartDate(filters.startDate);
+    if (filters.endDate) setEndDate(filters.endDate);
+  }, [filters]);
+
+  const updateQueryParams = (newFilters: Partial<FiltersState>) => {
     const params = new URLSearchParams();
+    if (newFilters.vessel) params.set('vessel', newFilters.vessel.toString());
+    if (newFilters.fiscalYear) params.set('fiscalYear', newFilters.fiscalYear);
+    if (newFilters.quarter) params.set('quarter', newFilters.quarter);
+    if (newFilters.startDate) params.set('startDate', newFilters.startDate);
+    if (newFilters.endDate) params.set('endDate', newFilters.endDate);
 
-    if (selectedVessel) {
-      filters.vessel = selectedVessel.id;
-      params.set('vessel', selectedVessel.id.toString());
-    } else {
-      params.delete('vessel');
-    }
-
-    if (selectedFiscalYear) {
-      filters.fiscalYear = selectedFiscalYear.name;
-      params.set('fiscalYear', selectedFiscalYear.name);
-    } else {
-      params.delete('fiscalYear');
-    }
-
-    if (selectedQuarter) {
-      filters.quarter = selectedQuarter.name;
-      params.set('quarter', selectedQuarter.name);
-    } else {
-      params.delete('quarter');
-    }
-
-    if (startDate) {
-      filters.startDate = startDate;
-      params.set('startDate', startDate);
-    } else {
-      params.delete('startDate');
-    }
-
-    if (endDate) {
-      filters.endDate = endDate;
-      params.set('endDate', endDate);
-    } else {
-      params.delete('endDate');
-    }
-
-    setFilters(filters);
-    window.history.pushState(
-      {},
-      '',
-      `${window.location.pathname}?${params.toString()}`,
-    );
-  }, [
-    selectedVessel,
-    selectedFiscalYear,
-    selectedQuarter,
-    startDate,
-    endDate,
-    setFilters,
-    queryClient,
-  ]);
+    router.replace(`${window.location.pathname}?${params.toString()}`);
+  };
 
   const onClickFilter = () => {
-    const filters: Record<any, any> = {
+    const newFilters: Partial<FiltersState> = {
       vessel: selectedVessel?.id || null,
       fiscalYear: selectedFiscalYear?.name || '',
       quarter: selectedQuarter?.name || '',
@@ -126,30 +99,8 @@ export const FilterBar = ({}) => {
       endDate: endDate || '',
     };
 
-    setFilters(filters);
-
-    let url = new URL(window.location.href);
-    let params = new URLSearchParams(url.search);
-
-    if (selectedVessel) {
-      params.set('vessel', selectedVessel.id.toString());
-    }
-    if (selectedFiscalYear) {
-      params.set('fiscalYear', selectedFiscalYear.name);
-    }
-    if (selectedQuarter) {
-      params.set('quarter', selectedQuarter.name);
-    }
-    if (startDate) {
-      params.set('startDate', startDate);
-    }
-    if (endDate) {
-      params.set('endDate', endDate);
-    }
-
-    url.search = params.toString();
-    window.history.pushState({}, '', url.toString());
-
+    setFilters(newFilters);
+    updateQueryParams(newFilters);
     void queryClient.invalidateQueries();
   };
 
@@ -167,16 +118,7 @@ export const FilterBar = ({}) => {
       endDate: '',
     });
 
-    let url = new URL(window.location.href);
-    let params = new URLSearchParams(url.search);
-    params.delete('vessel');
-    params.delete('fiscalYear');
-    params.delete('quarter');
-    params.delete('startDate');
-    params.delete('endDate');
-    url.search = params.toString();
-    window.history.pushState({}, '', url.toString());
-
+    router.replace(window.location.pathname);
     void queryClient.invalidateQueries();
   };
 
@@ -206,7 +148,6 @@ export const FilterBar = ({}) => {
                       />
                     </span>
                   </Listbox.Button>
-
                   <Transition
                     show={open}
                     as={Fragment}
@@ -238,7 +179,6 @@ export const FilterBar = ({}) => {
                               >
                                 {vessel.name}
                               </span>
-
                               {selected ? (
                                 <span
                                   className={classNames(
@@ -286,7 +226,6 @@ export const FilterBar = ({}) => {
                       />
                     </span>
                   </Listbox.Button>
-
                   <Transition
                     show={open}
                     as={Fragment}
@@ -318,7 +257,6 @@ export const FilterBar = ({}) => {
                               >
                                 {fiscalYear.name}
                               </span>
-
                               {selected ? (
                                 <span
                                   className={classNames(
@@ -366,7 +304,6 @@ export const FilterBar = ({}) => {
                       />
                     </span>
                   </Listbox.Button>
-
                   <Transition
                     show={open}
                     as={Fragment}
@@ -398,7 +335,6 @@ export const FilterBar = ({}) => {
                               >
                                 {quarter.name}
                               </span>
-
                               {selected ? (
                                 <span
                                   className={classNames(

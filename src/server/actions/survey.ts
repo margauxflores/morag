@@ -244,11 +244,6 @@ export const getSurveyData = async ({
     },
   });
 
-  // Aggregate and log intermediate results for debugging
-  console.log('Total Responses By Question:', totalResponsesByQuestion);
-  console.log('Positive Responses By Question:', positiveResponsesByQuestion);
-  console.log('Questions with Categories:', questions);
-
   // Calculate percentages for each question group
   const responsePercentageByCategory = questionGroups.map((name, index) => {
     const questionCategoryId = index + 1; // Assuming IDs start at 1
@@ -285,8 +280,6 @@ export const getSurveyData = async ({
       value: Math.round(percentage * 100) / 100, // Format percentage to two decimal places as a number
     };
   });
-
-  console.log('Response Percentage By Category:', responsePercentageByCategory);
 
   return [
     {
