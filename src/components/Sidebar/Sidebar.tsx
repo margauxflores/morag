@@ -1,13 +1,8 @@
 'use client';
 
-import {
-  ChartBarSquareIcon,
-  HomeIcon,
-  UsersIcon,
-} from '@heroicons/react/24/outline';
+import { ChartBarSquareIcon, HomeIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
 import Link from 'next/link';
 
 const navigation = [
@@ -52,6 +47,12 @@ const navigation = [
 
 export const Sidebar = ({}) => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const getQueryString = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    return params.toString() ? `?${params.toString()}` : '';
+  };
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
@@ -67,9 +68,13 @@ export const Sidebar = ({}) => {
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" className="-mx-2 space-y-1">
-                {navigation.map((item, index) => (
+                {navigation.map((item) => (
                   <li key={item.name}>
-                    <Link href={item.href} passHref legacyBehavior>
+                    <Link
+                      href={`${item.href}${getQueryString()}`}
+                      passHref
+                      legacyBehavior
+                    >
                       <a
                         className={classNames(
                           pathname === item.href
