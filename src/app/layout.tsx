@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { FilterBar } from '@/components/FilterBar/FilterBar';
 import Providers from '@/providers';
 import { Metadata } from 'next';
+import QueryState from '@/components/_queryState';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,7 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <main className="py-10 lg:pl-72">
             <div className="px-4 sm:px-6 lg:px-8 max-w-screen-xl">
               <FilterBar />
-              {children}
+              <QueryState>{children}</QueryState>
             </div>
           </main>
         </Providers>

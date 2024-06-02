@@ -2,11 +2,12 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Section } from '@/components/Section';
-import { useFilters } from '@/providers/filters';
+import useFilterStore from '@/store/filter.store';
 
 export default function LifeOnboardPage() {
-  const { filters } = useFilters();
-
+  const { filters } = useFilterStore((state: any) => ({
+    filters: state.filters,
+  }));
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const { data: lifeOnboard } = useSuspenseQuery({

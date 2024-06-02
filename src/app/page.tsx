@@ -3,12 +3,13 @@
 import { StatsBox } from '@/components/StatsBox';
 import { ResponderData } from '@/components/_sections';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useFilters } from '@/providers/filters';
+import useFilterStore from '@/store/filter.store';
 import { SatisfactionOverview } from '@/components/_sections/SatisfactionOverview';
 
 export default function Home() {
-  const { filters } = useFilters();
-
+  const { filters } = useFilterStore((state: any) => ({
+    filters: state.filters,
+  }));
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const { data: survey } = useSuspenseQuery({

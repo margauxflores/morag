@@ -1,11 +1,10 @@
 'use client';
 
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useReducer, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import classNames from 'classnames';
-import { FiltersState, useFilters } from '@/providers/filters';
-import { useQueryClient } from '@tanstack/react-query';
+import useFilterStore, { FiltersState } from '@/store/filter.store';
 import { useRouter } from 'next/navigation';
 
 interface Vessel {
@@ -22,6 +21,20 @@ interface Quarter {
   id: number;
   name: string;
 }
+
+// Define the types for your state
+type FilterState = {
+  selectedVessel: Vessel | null;
+  selectedFiscalYear: FiscalYear | null;
+  selectedQuarter: Quarter | null;
+  startDate: string;
+  endDate: string;
+};
+
+// Define the types for your actions
+type Action =
+  | { type: 'UPDATE'; payload: Partial<FilterState> }
+  | { type: 'RESET' };
 
 const vessels = [
   { id: 1, name: 'Hakuho-Maru' },
@@ -52,31 +65,57 @@ const quarters = [
   { id: 4, name: 'Q4' },
 ];
 
+const initialFilterState = {
+  selectedVessel: null,
+  selectedFiscalYear: null,
+  selectedQuarter: null,
+  startDate: '',
+  endDate: '',
+};
+
+const reducer = (state: FilterState, action: Action): FilterState => {
+  switch (action.type) {
+    case 'UPDATE':
+      return { ...state, ...action.payload };
+    case 'RESET':
+      return initialFilterState;
+    default:
+      return state;
+  }
+};
+
 export const FilterBar = ({}) => {
-  const { filters, setFilters } = useFilters();
-  const [selectedVessel, setSelectedVessel] = useState<Vessel | null>(null);
-  const [selectedFiscalYear, setSelectedFiscalYear] =
-    useState<FiscalYear | null>(null);
-  const [selectedQuarter, setSelectedQuarter] = useState<Quarter | null>(null);
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
-  const queryClient = useQueryClient();
+  const { filters, setFilters } = useFilterStore((state: any) => ({
+    filters: state.filters,
+    setFilters: state.setFilters,
+  }));
+  const [filterOptions, dispatch] = useReducer(reducer, initialFilterState);
+
   const router = useRouter();
+
+  const setFilterOptions = (next: Partial<FilterState>) => {
+    dispatch({ type: 'UPDATE', payload: next });
+  };
 
   useEffect(() => {
     // Initialize state from filters context
     if (filters.vessel)
-      setSelectedVessel(vessels.find((v) => v.id === filters.vessel) || null);
+      setFilterOptions({
+        selectedVessel: vessels.find((v) => v.id === filters.vessel) || null,
+      });
     if (filters.fiscalYear)
-      setSelectedFiscalYear(
-        fiscalYears.find((fy) => fy.name === filters.fiscalYear) || null,
-      );
+      setFilterOptions({
+        selectedFiscalYear:
+          fiscalYears.find((fy) => fy.name === filters.fiscalYear) || null,
+      });
     if (filters.quarter)
-      setSelectedQuarter(
-        quarters.find((q) => q.name === filters.quarter) || null,
-      );
-    if (filters.startDate) setStartDate(filters.startDate);
-    if (filters.endDate) setEndDate(filters.endDate);
+      setFilterOptions({
+        selectedQuarter:
+          quarters.find((q) => q.name === filters.quarter) || null,
+      });
+
+    if (filters.startDate) setFilterOptions({ startDate: filters.startDate });
+    if (filters.endDate) setFilterOptions({ endDate: filters.endDate });
   }, [filters]);
 
   const updateQueryParams = (newFilters: Partial<FiltersState>) => {
@@ -92,34 +131,21 @@ export const FilterBar = ({}) => {
 
   const onClickFilter = () => {
     const newFilters: Partial<FiltersState> = {
-      vessel: selectedVessel?.id || null,
-      fiscalYear: selectedFiscalYear?.name || '',
-      quarter: selectedQuarter?.name || '',
-      startDate: startDate || '',
-      endDate: endDate || '',
+      vessel: filterOptions.selectedVessel?.id || null,
+      fiscalYear: filterOptions.selectedFiscalYear?.name || '',
+      quarter: filterOptions.selectedQuarter?.name || '',
+      startDate: filterOptions.startDate || '',
+      endDate: filterOptions.endDate || '',
     };
 
     setFilters(newFilters);
     updateQueryParams(newFilters);
-    void queryClient.invalidateQueries();
   };
 
   const onClickReset = () => {
-    setSelectedVessel(null);
-    setSelectedFiscalYear(null);
-    setSelectedQuarter(null);
-    setStartDate('');
-    setEndDate('');
-    setFilters({
-      vessel: null,
-      fiscalYear: '',
-      quarter: '',
-      startDate: '',
-      endDate: '',
-    });
-
+    dispatch({ type: 'RESET' });
     router.replace(window.location.pathname);
-    void queryClient.invalidateQueries();
+    setFilters(initialFilterState);
   };
 
   return (
@@ -130,7 +156,10 @@ export const FilterBar = ({}) => {
       <dd className="flex gap-4 items-center">
         {/* Vessel */}
         <div className="w-full">
-          <Listbox value={selectedVessel} onChange={setSelectedVessel}>
+          <Listbox
+            value={filterOptions.selectedVessel}
+            onChange={(value) => setFilterOptions({ selectedVessel: value })}
+          >
             {({ open }) => (
               <>
                 <Listbox.Label className="block text-xs font-medium leading-6 text-gray-900">
@@ -139,7 +168,9 @@ export const FilterBar = ({}) => {
                 <div className="relative mt-2">
                   <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                     <span className="block truncate">
-                      {selectedVessel ? selectedVessel.name : 'Select a vessel'}
+                      {filterOptions.selectedVessel
+                        ? filterOptions.selectedVessel.name
+                        : 'Select a vessel'}
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                       <ChevronUpDownIcon
@@ -206,7 +237,12 @@ export const FilterBar = ({}) => {
 
         {/* Fiscal Year */}
         <div className="w-full">
-          <Listbox value={selectedFiscalYear} onChange={setSelectedFiscalYear}>
+          <Listbox
+            value={filterOptions.selectedFiscalYear}
+            onChange={(value) =>
+              setFilterOptions({ selectedFiscalYear: value })
+            }
+          >
             {({ open }) => (
               <>
                 <Listbox.Label className="block text-xs font-medium leading-6 text-gray-900">
@@ -215,8 +251,8 @@ export const FilterBar = ({}) => {
                 <div className="relative mt-2">
                   <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                     <span className="block truncate">
-                      {selectedFiscalYear
-                        ? selectedFiscalYear.name
+                      {filterOptions.selectedFiscalYear
+                        ? filterOptions.selectedFiscalYear.name
                         : 'Select a fiscal year'}
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -284,7 +320,10 @@ export const FilterBar = ({}) => {
 
         {/* Quarter */}
         <div className="w-full">
-          <Listbox value={selectedQuarter} onChange={setSelectedQuarter}>
+          <Listbox
+            value={filterOptions.selectedQuarter}
+            onChange={(value) => setFilterOptions({ selectedQuarter: value })}
+          >
             {({ open }) => (
               <>
                 <Listbox.Label className="block text-xs font-medium leading-6 text-gray-900">
@@ -293,8 +332,8 @@ export const FilterBar = ({}) => {
                 <div className="relative mt-2">
                   <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                     <span className="block truncate">
-                      {selectedQuarter
-                        ? selectedQuarter.name
+                      {filterOptions.selectedQuarter
+                        ? filterOptions.selectedQuarter.name
                         : 'Select a quarter'}
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -372,8 +411,8 @@ export const FilterBar = ({}) => {
             type="date"
             id="start-date"
             className="mt-2 block w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            value={filterOptions.startDate}
+            onChange={(e) => setFilterOptions({ startDate: e.target.value })}
           />
         </div>
 
@@ -389,8 +428,8 @@ export const FilterBar = ({}) => {
             type="date"
             id="end-date"
             className="mt-2 block w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            value={filterOptions.endDate}
+            onChange={(e) => setFilterOptions({ endDate: e.target.value })}
           />
         </div>
 
