@@ -31,13 +31,18 @@ const vessels = [
   { id: 6, name: 'Kaimei' },
 ];
 
-const fiscalYears = [
-  { id: 1, name: '2019' },
-  { id: 2, name: '2020' },
-  { id: 3, name: '2021' },
-  { id: 4, name: '2022' },
-  { id: 5, name: '2023' },
-];
+const generateFiscalYears = (startYear: number) => {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+
+  for (let year = startYear; year <= currentYear; year++) {
+    years.push({ id: year - startYear + 1, name: year.toString() });
+  }
+
+  return years;
+};
+
+const fiscalYears = generateFiscalYears(2019);
 
 const quarters = [
   { id: 1, name: 'Q1' },
