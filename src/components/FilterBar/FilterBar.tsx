@@ -56,6 +56,8 @@ export const FilterBar = ({}) => {
   const [selectedFiscalYear, setSelectedFiscalYear] =
     useState<FiscalYear | null>(null);
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter | null>(null);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const queryClient = useQueryClient();
 
   const { setFilters } = useFilters();
@@ -85,6 +87,20 @@ export const FilterBar = ({}) => {
       params.delete('quarter');
     }
 
+    if (startDate) {
+      filters.startDate = startDate;
+      params.set('startDate', startDate);
+    } else {
+      params.delete('startDate');
+    }
+
+    if (endDate) {
+      filters.endDate = endDate;
+      params.set('endDate', endDate);
+    } else {
+      params.delete('endDate');
+    }
+
     setFilters(filters);
     window.history.pushState(
       {},
@@ -95,26 +111,44 @@ export const FilterBar = ({}) => {
     selectedVessel,
     selectedFiscalYear,
     selectedQuarter,
+    startDate,
+    endDate,
     setFilters,
     queryClient,
   ]);
 
   const onClickFilter = () => {
-    if (selectedVessel && selectedFiscalYear && selectedQuarter) {
-      setFilters({
-        vessel: selectedVessel.id,
-        fiscalYear: selectedFiscalYear.name,
-        quarter: selectedQuarter.name,
-      });
+    const filters: Record<any, any> = {
+      vessel: selectedVessel?.id || null,
+      fiscalYear: selectedFiscalYear?.name || '',
+      quarter: selectedQuarter?.name || '',
+      startDate: startDate || '',
+      endDate: endDate || '',
+    };
 
-      let url = new URL(window.location.href);
-      let params = new URLSearchParams(url.search);
+    setFilters(filters);
+
+    let url = new URL(window.location.href);
+    let params = new URLSearchParams(url.search);
+
+    if (selectedVessel) {
       params.set('vessel', selectedVessel.id.toString());
-      params.set('fiscalYear', selectedFiscalYear.name);
-      params.set('quarter', selectedQuarter.name);
-      url.search = params.toString();
-      window.history.pushState({}, '', url.toString());
     }
+    if (selectedFiscalYear) {
+      params.set('fiscalYear', selectedFiscalYear.name);
+    }
+    if (selectedQuarter) {
+      params.set('quarter', selectedQuarter.name);
+    }
+    if (startDate) {
+      params.set('startDate', startDate);
+    }
+    if (endDate) {
+      params.set('endDate', endDate);
+    }
+
+    url.search = params.toString();
+    window.history.pushState({}, '', url.toString());
 
     void queryClient.invalidateQueries();
   };
@@ -123,13 +157,23 @@ export const FilterBar = ({}) => {
     setSelectedVessel(null);
     setSelectedFiscalYear(null);
     setSelectedQuarter(null);
-    setFilters({ vessel: null, fiscalYear: '', quarter: '' });
+    setStartDate('');
+    setEndDate('');
+    setFilters({
+      vessel: null,
+      fiscalYear: '',
+      quarter: '',
+      startDate: '',
+      endDate: '',
+    });
 
     let url = new URL(window.location.href);
     let params = new URLSearchParams(url.search);
     params.delete('vessel');
     params.delete('fiscalYear');
     params.delete('quarter');
+    params.delete('startDate');
+    params.delete('endDate');
     url.search = params.toString();
     window.history.pushState({}, '', url.toString());
 
@@ -378,6 +422,40 @@ export const FilterBar = ({}) => {
               </>
             )}
           </Listbox>
+        </div>
+
+        {/* Start Date */}
+        <div className="w-full">
+          <label
+            htmlFor="start-date"
+            className="block text-xs font-medium leading-6 text-gray-900"
+          >
+            Start Date
+          </label>
+          <input
+            type="date"
+            id="start-date"
+            className="mt-2 block w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+
+        {/* End Date */}
+        <div className="w-full">
+          <label
+            htmlFor="end-date"
+            className="block text-xs font-medium leading-6 text-gray-900"
+          >
+            End Date
+          </label>
+          <input
+            type="date"
+            id="end-date"
+            className="mt-2 block w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
         </div>
 
         <div className="w-full flex self-end gap-2">

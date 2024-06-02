@@ -12,6 +12,8 @@ interface GenerateResponseParams {
   vessel?: number;
   fiscalYear?: number;
   quarter?: Quarter;
+  startDate?: string;
+  endDate?: string;
 }
 
 export async function prepareAndGenerateResponse({
@@ -20,24 +22,31 @@ export async function prepareAndGenerateResponse({
   vessel,
   fiscalYear,
   quarter,
+  startDate,
+  endDate,
 }: GenerateResponseParams): Promise<any> {
   // Adjust the return type according to what generateResponse returns
   let dateRange: { startDate: string; endDate: string } | null = null;
 
-  if (fiscalYear) {
-    const { startDate, endDate } = getYearStartAndEndDates(fiscalYear);
+  // Use custom date range if provided
+  if (startDate && endDate) {
+    dateRange = { startDate, endDate };
+  } else if (fiscalYear) {
+    const { startDate: yearStartDate, endDate: yearEndDate } =
+      getYearStartAndEndDates(fiscalYear);
     dateRange = {
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
+      startDate: yearStartDate.toISOString(),
+      endDate: yearEndDate.toISOString(),
     };
-  }
 
-  if (fiscalYear && quarter) {
-    const { startDate, endDate } = getQuarterDateRange(fiscalYear, quarter);
-    dateRange = {
-      startDate: startDate.toString(),
-      endDate: endDate.toString(),
-    };
+    if (quarter) {
+      const { startDate: quarterStartDate, endDate: quarterEndDate } =
+        getQuarterDateRange(fiscalYear, quarter);
+      dateRange = {
+        startDate: quarterStartDate.toString(),
+        endDate: quarterEndDate.toString(),
+      };
+    }
   }
 
   // Directly pass vessel as vesselId, and conditionally pass startDate and endDate

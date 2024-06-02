@@ -6,19 +6,28 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     const requestBody = await request.json();
-    const { vessel, fiscalYear, quarter } = requestBody;
+    const { vessel, fiscalYear, quarter, startDate, endDate } = requestBody;
     let dateRange = null;
 
-    if (fiscalYear) {
-      const { startDate, endDate } = getYearStartAndEndDates(fiscalYear);
+    // Use custom date range if provided
+    if (startDate && endDate) {
+      dateRange = { startDate, endDate };
+    } else if (fiscalYear) {
+      const { startDate: yearStartDate, endDate: yearEndDate } =
+        getYearStartAndEndDates(fiscalYear);
       dateRange = {
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
+        startDate: yearStartDate.toISOString(),
+        endDate: yearEndDate.toISOString(),
       };
     }
 
     if (fiscalYear && quarter) {
-      dateRange = getQuarterDateRange(fiscalYear, quarter);
+      const { startDate: quarterStartDate, endDate: quarterEndDate } =
+        getQuarterDateRange(fiscalYear, quarter);
+      dateRange = {
+        startDate: quarterStartDate.toString(),
+        endDate: quarterEndDate.toString(),
+      };
     }
 
     const data = await getSurveyData({

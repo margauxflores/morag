@@ -10,6 +10,8 @@ interface FiltersState {
   vessel: number | null;
   fiscalYear: string;
   quarter: string;
+  startDate: string;
+  endDate: string;
 }
 
 interface FiltersContextType {
@@ -22,6 +24,8 @@ const defaultContext: FiltersContextType = {
     vessel: null,
     fiscalYear: '',
     quarter: '',
+    startDate: '',
+    endDate: '',
   },
   setFilters: () => {}, // No-op function as a placeholder
 };
