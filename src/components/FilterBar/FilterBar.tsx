@@ -113,7 +113,7 @@ export const FilterBar = ({}) => {
     setSelectedVessel(null);
     setSelectedFiscalYear(null);
     setSelectedQuarter(null);
-    setFilters({});
+    setFilters({ vessel: null, fiscalYear: '', quarter: '' });
 
     let url = new URL(window.location.href);
     let params = new URLSearchParams(url.search);

@@ -188,6 +188,106 @@ export const getSurveyData = async ({
     };
   });
 
+  // Predefined question groups
+  const questionGroups = [
+    'Overall Cruise Evaluation',
+    'Cruise Safety',
+    'Cruise Support During The Planning Stage',
+    'Onboard Research and Survey Equipment',
+    'Onboard Network',
+    'Life Onboard',
+    'Onboard Research Support',
+  ];
+
+  // Group responses by question_id and count responses with rating_id 3, 4, or 5
+  const positiveResponsesByQuestion = await prisma.response.groupBy({
+    by: ['question_id'],
+    where: {
+      rating_id: {
+        in: [3, 4, 5],
+      },
+      cruise: cruiseConditions,
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  // Group total responses by question_id
+  const totalResponsesByQuestion = await prisma.response.groupBy({
+    by: ['question_id'],
+    where: {
+      rating_id: {
+        not: 6,
+      },
+      cruise: cruiseConditions,
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  // Fetch the corresponding questions with their categories
+  const questionIds = totalResponsesByQuestion
+    .map((result) => result.question_id)
+    .filter((id) => id !== null) as bigint[];
+
+  const questions = await prisma.question.findMany({
+    where: {
+      id: {
+        in: questionIds,
+      },
+    },
+    select: {
+      id: true,
+      question_category_id: true,
+    },
+  });
+
+  // Aggregate and log intermediate results for debugging
+  console.log('Total Responses By Question:', totalResponsesByQuestion);
+  console.log('Positive Responses By Question:', positiveResponsesByQuestion);
+  console.log('Questions with Categories:', questions);
+
+  // Calculate percentages for each question group
+  const responsePercentageByCategory = questionGroups.map((name, index) => {
+    const questionCategoryId = index + 1; // Assuming IDs start at 1
+    const totalResponseCount = questions
+      .filter(
+        (question) =>
+          question.question_category_id === BigInt(questionCategoryId),
+      )
+      .map(
+        (question) =>
+          totalResponsesByQuestion.find(
+            (result) => result.question_id === question.id,
+          )?._count.id || 0,
+      )
+      .reduce((acc, count) => acc + count, 0);
+    const positiveResponseCount = questions
+      .filter(
+        (question) =>
+          question.question_category_id === BigInt(questionCategoryId),
+      )
+      .map(
+        (question) =>
+          positiveResponsesByQuestion.find(
+            (result) => result.question_id === question.id,
+          )?._count.id || 0,
+      )
+      .reduce((acc, count) => acc + count, 0);
+    const percentage =
+      totalResponseCount > 0
+        ? (positiveResponseCount / totalResponseCount) * 100
+        : 0;
+    return {
+      name,
+      value: Math.round(percentage * 100) / 100, // Format percentage to two decimal places as a number
+    };
+  });
+
+  console.log('Response Percentage By Category:', responsePercentageByCategory);
+
   return [
     {
       name: 'Survey Data',
@@ -208,6 +308,10 @@ export const getSurveyData = async ({
     {
       name: 'Nationalities',
       dataset: nationalitiesData,
+    },
+    {
+      name: 'Response Percentage by Question Category',
+      dataset: responsePercentageByCategory,
     },
   ];
 };

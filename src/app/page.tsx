@@ -4,6 +4,7 @@ import { StatsBox } from '@/components/StatsBox';
 import { ResponderData } from '@/components/_sections';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useFilters } from '@/providers/filters';
+import { SatisfactionOverview } from '@/components/_sections/SatisfactionOverview';
 
 export default function Home() {
   const { filters } = useFilters();
@@ -53,6 +54,7 @@ export default function Home() {
         <StatsBox title="Overview" data={survey[0]?.value} />
       )}
       <ResponderData valueName="Responders" data={dataset} />
+      <SatisfactionOverview dataset={survey[5]?.dataset} />
     </div>
   );
 }
